@@ -11,7 +11,13 @@ import {
   Dialog,
   Input,
   Select,
-  Option
+  Option,
+  InfiniteScroll,
+  Radio,
+  Menu,
+  Submenu,
+  MenuItem,
+  Backtop
 } from 'element-ui'
 
 Vue.use(Button)
@@ -26,3 +32,9 @@ Vue.use(Button)
   .use(Input)
   .use(Select)
   .use(Option)
+  .use(InfiniteScroll)
+  .use(Radio)
+  .use(Menu)
+  .use(Submenu)
+  .use(MenuItem)
+  .use(Backtop)
