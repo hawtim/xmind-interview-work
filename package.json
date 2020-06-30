@@ -2,6 +2,7 @@
   "name": "x-pocket-book",
   "version": "0.1.0",
   "private": true,
+  "author": "hawtim<hawtimzhang@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -13,6 +14,7 @@
     "core-js": "^3.6.5",
     "dayjs": "^1.8.28",
     "element-ui": "^2.4.5",
+    "normalize.css": "^8.0.1",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"
