@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './plugins/element'
+import './plugins/vchart'
 import 'normalize.css'
 import './assets/base.scss'
 
