@@ -5,18 +5,6 @@ module.exports = {
   configureWebpack: {
     module: {
       rules: [
-        // {
-        //   test: /\.(txt|csv|mmdb)$/,
-        //   use: [
-        //     {
-        //       loader: 'file-loader',
-        //       options: {
-        //         name: "[path][name].[ext]",
-        //         emitFile: true,
-        //       },
-        //     },
-        //   ],
-        // },
         {
           test: /\.csv$/,
           loader: 'csv-loader',
