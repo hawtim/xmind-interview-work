@@ -1,25 +1,5 @@
 <template>
   <div class="home flex">
-    <el-menu
-      default-active="/home"
-      router
-      @select="handleSelectMenu"
-      background-color="#545c64"
-      text-color="#fff"
-      active-text-color="#ffd04b"
-      @open="handleOpen"
-      @close="handleClose"
-      :collapse="isCollapse"
-    >
-      <el-menu-item index="/home">
-        <i class="el-icon-tickets"></i>
-        <span slot="title">账单</span>
-      </el-menu-item>
-      <el-menu-item index="/summary">
-        <i class="el-icon-s-data"></i>
-        <span slot="title">统计</span>
-      </el-menu-item>
-    </el-menu>
     <div class="main-content">
       <el-form :inline="true" :model="filterForm" class="flex justify_between">
         <div class="filter-content">
@@ -28,27 +8,32 @@
               v-model="filterForm.month"
               type="month"
               placeholder="选择月份"
-              @change="onSubmit"
             >
             </el-date-picker>
           </el-form-item>
+          <el-form-item label="当前分类">
+            <el-select
+              v-model="filterForm.category"
+              clearable
+              placeholder="选择分类"
+            >
+              <el-option
+                v-for="item in category"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item>
             <el-button
-              v-if="filterForm.month"
+              v-if="filterForm.month || filterForm.category"
               type="primary"
               @click="onClear"
               icon="el-icon-scissors"
-              >清除筛选</el-button
+              >清除</el-button
             >
           </el-form-item>
-          <template v-if="output || income">
-            <el-form-item label="总支出" style="color: #F56C6C;"
-              >￥{{ output }}</el-form-item
-            >
-            <el-form-item label="总收入" style="color: #67C23A;"
-              >￥{{ income }}</el-form-item
-            >
-          </template>
         </div>
         <el-form-item>
           <el-button
@@ -60,7 +45,33 @@
           >
         </el-form-item>
       </el-form>
-      <!-- TODO: 筛选项 -->
+      <el-form
+        :inline="true"
+        class="flex align_center"
+        v-if="filterForm.month || filterForm.category"
+      >
+        <div class="filter-content flex align_center" v-if="output || income">
+          <el-form-item
+            class="current-filter-condition"
+            label="当前筛选条件："
+          ></el-form-item>
+          <el-form-item label="总支出" style="color: #F56C6C;"
+            >￥{{ output }}</el-form-item
+          >
+          <el-form-item label="总收入" style="color: #67C23A;"
+            >￥{{ income }}</el-form-item
+          >
+        </div>
+      </el-form>
+      <!-- 统计区域 -->
+      <div
+        class="statistic-container flex"
+        v-if="this.currentBillList && filterForm.month && !filterForm.category"
+      >
+        <ve-pie style="width: 50%;" :data="outputChartData"></ve-pie>
+        <ve-pie style="width: 50%;" :data="incomeChartData"></ve-pie>
+      </div>
+      <!-- 有月份的筛选结果 -->
       <div class="filter-data-container" v-if="filterForm.month">
         <div class="month-container">
           {{ formatMonth(filterForm.month) }}
@@ -75,7 +86,7 @@
               <p>{{ item.category }}</p>
               <p>{{ item.time }}</p>
             </div>
-            <div :style="{color: item.type ? '#67C23A' : '#F56C6C'}">
+            <div :style="{ color: item.type ? '#67C23A' : '#F56C6C' }">
               {{ item.amount }}
             </div>
           </div>
@@ -87,6 +98,7 @@
           </p>
         </div>
       </div>
+      <!-- 所有月份的结果列表 -->
       <div
         v-if="!filterForm.month"
         class="infinite-list"
@@ -94,12 +106,12 @@
         v-infinite-scroll="loadMoreBill"
         style="overflow:auto"
       >
-        <div
-          v-for="(value, key, index) in splitBillList"
-          :key="index"
-          class="infinite-list-item"
-        >
-          <template>
+        <template v-if="!filterSplitBillList">
+          <div
+            v-for="(value, key, index) in splitBillList"
+            :key="index"
+            class="infinite-list-item"
+          >
             <div class="month-container">
               {{ formatMonth(key) }}
             </div>
@@ -113,13 +125,41 @@
                   <p>{{ item.category }}</p>
                   <p>{{ item.time }}</p>
                 </div>
-                <div :style="{color: item.type ? '#67C23A' : '#F56C6C'}">
+                <div :style="{ color: item.type ? '#67C23A' : '#F56C6C' }">
                   {{ item.amount }}
                 </div>
               </div>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
+        <template v-if="filterSplitBillList">
+          <div
+            v-for="(value, key, index) in filterSplitBillList"
+            :key="index"
+            class="infinite-list-item"
+          >
+            <template>
+              <div class="month-container" v-if="value.length">
+                {{ formatMonth(key) }}
+              </div>
+              <div class="value-container" v-if="value.length">
+                <div
+                  v-for="(item, index) in value"
+                  :key="index"
+                  class="bill-item flex justify_between align_center"
+                >
+                  <div>
+                    <p>{{ item.category }}</p>
+                    <p>{{ item.time }}</p>
+                  </div>
+                  <div :style="{ color: item.type ? '#67C23A' : '#F56C6C' }">
+                    {{ item.amount }}
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
         <p v-if="loading">加载中...</p>
         <!-- <p class="no-more-list" v-if="noMore">没有更多了</p> -->
       </div>
@@ -138,8 +178,8 @@
 <script>
 // @ is an alias to /src
 import dayjs from 'dayjs'
-import bill from '@/mock/bill.csv'
-import category from '@/mock/category.csv'
+// 考虑异步组件
+import { formatDate } from '@/utils'
 import AddBillDialog from '@/components/AddBillDialog'
 
 export default {
@@ -149,38 +189,68 @@ export default {
   },
   data() {
     return {
-      category: null,
+      originBill: [],
       filterForm: {
-        month: ''
+        month: '',
+        category: ''
       },
       dialogFormVisible: false,
-      isCollapse: true,
+      isCollapse: window && window.innerWidth <= 768,
       loading: false,
-      splitBillList: {},
       // 当前筛选月份的账单列表
       currentBillList: [],
+      filterSplitBillList: null,
       // 总收入总支出
       income: 0,
-      output: 0
+      output: 0,
+      outputChartData: {
+        columns: ['分类', '消费金额']
+      },
+      incomeChartData: {
+        columns: ['分类', '消费金额']
+      }
     }
   },
-  created() {
-    this.category = this.transformCategory(category)
-    const temp = this.formatBillList(bill)
-    this.splitBillList = this.handleSplitBillList(temp)
+  computed: {
+    ...mapGetters(['bill', 'category', 'categoryMap', 'splitBillList'])
   },
-  // computed: {
-  //   noMore() {
-  //     return this.splitBillList.length >= 20
-  //   }
-  // },
+  created() {
+    this.$store.commit('transformCategory')
+    // 不修改源数据
+    this.processBillList()
+  },
   watch: {
     'filterForm.month'(val) {
-      const month = dayjs(val).format('YYYY-MM')
+      if (!val) {
+        this.filterSplitBillList = null
+        if (this.filterForm.category) {
+          const category = this.filterForm.category
+          this.calculateCurrentCategory(category)
+        }
+        return
+      }
+      const month = formatDate(val, 'YYYY-MM')
       this.calculateCurrentMonth(month)
+    },
+    'filterForm.category'(val) {
+      if (!val) {
+        this.filterSplitBillList = null
+        if (this.filterForm.month) {
+          const month = formatDate(this.filterForm.month, 'YYYY-MM')
+          this.calculateCurrentMonth(month)
+        }
+        return
+      }
+      const category = val
+      this.calculateCurrentCategory(category)
     }
   },
   methods: {
+    processBillList() {
+      this.originBill = Object.assign([], this.bill)
+      const temp = this.formatBillList(this.bill)
+      this.$store.commit('handleSplitBillList', temp)
+    },
     handleSplitBillList(billList) {
       const obj = {}
       billList.forEach(item => {
@@ -195,82 +265,162 @@ export default {
       return obj
     },
     calculateCurrentMonth(month) {
-      this.currentBillList = this.splitBillList[month]
+      if (!this.filterForm.category) {
+        this.currentBillList = this.splitBillList[month]
+        this.calculateCurrentTotal()
+        this.calculateChartData()
+      } else {
+        const temp = this.splitBillList[month] || []
+        const temp1 = temp.filter(
+          item => item.category == this.categoryMap[this.filterForm.category]
+        )
+        this.currentBillList = temp1
+        this.calculateCurrentTotal()
+      }
+    },
+    // 计算图片相关数据
+    calculateChartData() {
+      if (!this.currentBillList || !this.currentBillList.length) return
+      this.incomeTotal()
+      this.outputTotal()
+    },
+    incomeTotal() {
+      const temp = {}
+      this.currentBillList.forEach(item => {
+        if (item.type == 1) {
+          const absAmount = Math.abs(item.amount)
+          if (temp[item.category]) {
+            temp[item.category] += Number(absAmount)
+          } else {
+            temp[item.category] = 0
+            temp[item.category] += Number(absAmount)
+          }
+        }
+      })
+      // if (!Object.keys(temp).length) return
+      const rows = Object.keys(temp)
+        .map(key => {
+          return {
+            分类: key,
+            消费金额: temp[key]
+          }
+        })
+        .sort((cur, next) => {
+          return cur['消费金额'] - next['消费金额']
+        })
+      this.incomeChartData = Object.assign({}, this.incomeChartData, {
+        rows
+      })
+    },
+    outputTotal() {
+      const temp = {}
+      this.currentBillList.forEach(item => {
+        if (item.type == 0) {
+          const absAmount = Math.abs(item.amount)
+          if (temp[item.category]) {
+            temp[item.category] += Number(absAmount)
+          } else {
+            temp[item.category] = 0
+            temp[item.category] += Number(absAmount)
+          }
+        }
+      })
+      // if (!Object.keys(temp).length) return
+      this.outputChartData = Object.assign({}, this.outputChartData, {
+        rows: Object.keys(temp)
+          .map(key => {
+            return {
+              分类: key,
+              消费金额: temp[key]
+            }
+          })
+          .sort((cur, next) => {
+            return cur['消费金额'] - next['消费金额']
+          })
+      })
+    },
+    // 计算当前列表的里的总收入和总支出
+    calculateCurrentTotal() {
       this.income = 0
       this.output = 0
       if (!this.currentBillList) return
       this.currentBillList.forEach(item => {
+        const absAmount = Math.abs(item.amount)
         if (item.type == 1) {
-          this.income += Number(Math.abs(item.amount))
+          this.income += Number(absAmount)
         } else {
-          this.output += Number(Math.abs(item.amount))
+          this.output += Number(absAmount)
         }
       })
     },
-    handleSelectMenu(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
+    // 筛选出当前分类下的列表
+    calculateCurrentCategory(category) {
+      if (!this.filterForm.month) {
+        // 筛选全部里的某一个分类
+        const temp = {}
+        Object.keys(this.splitBillList).forEach(key => {
+          const filtered = this.splitBillList[key].filter(
+            item => item.category == this.categoryMap[category]
+          )
+          temp[key] = filtered
+        })
+        this.filterSplitBillList = temp
+      } else {
+        // 筛选某个月份下的某个分类
+        const month = formatDate(this.filterForm.month, 'YYYY-MM')
+        const temp = this.splitBillList[month] || []
+        const temp1 = temp.filter(
+          item => item.category == this.categoryMap[category]
+        )
+        this.currentBillList = temp1
+        this.calculateCurrentTotal()
+      }
     },
     loadMoreBill() {
-      console.log('xxxxx')
+      console.log('TODO 加载更多账单')
+    },
+    sortBillList(billList) {
+      return billList.sort((current, next) => next.time - current.time)
     },
     formatBillList(billList) {
       // 默认时间倒序
-      const temp = billList.sort((current, next) => {
-        return next.time - current.time
-      })
-      // this.filterForm.month = dayjs(billList[0].time).format('YYYY-MM')
-      // console.log(this.filterForm.month)
+      const temp = this.sortBillList(billList)
       return temp.map(item => {
-        item.time = dayjs(item.time).format('YYYY-MM-DD HH:MM')
-        item.category = this.category[item.category]
-        item.amount = !item.type
-          ? '-' + Math.abs(item.amount)
-          : Math.abs(item.amount)
+        item.time = formatDate(item.time)
+        item.category = this.categoryMap[item.category] || item.category
+        const absAmount = Math.abs(item.amount)
+        item.amount = !item.type ? '-' + absAmount : absAmount
         return item
       })
     },
-    transformCategory(category) {
-      const temp = {}
-      category.forEach(item => {
-        temp[item.id] = item.name
-      })
-      return temp
-    },
-    formatDate(string) {
-      return dayjs(string).format('YYYY-MM-DD HH:MM')
-    },
     formatMonth(string) {
-      return dayjs(string).format('YYYY年MM月')
-    },
-    tableRowClassName({row, rowIndex}) {
-      if (row.type === 1) {
-        return 'success-row'
-      } else if (row.type === 0) {
-        return 'warning-row'
-      }
-      return ''
+      return formatDate(string, 'YYYY年MM月')
     },
     onAdd() {
-      console.log('add')
       this.dialogFormVisible = true
     },
     handleDialogHide() {
       this.dialogFormVisible = false
     },
-    onSubmit() {
-      console.log('submit')
-    },
     handleDialogUpdate(data) {
-      bill.unshift(data)
+      this.filterForm.month = ''
+      this.filterForm.category = ''
+      // 新增数据更新
+      this.$store.commit('addBill', data)
+      this.processBillList()
     },
     onClear() {
       this.filterForm.month = ''
+      this.filterForm.category = ''
+    },
+    onStatistic() {
+      const month = formatDate(this.filterForm.month, 'YYYY-MM')
+      this.$router.push({
+        name: 'Summary',
+        query: {
+          month
+        }
+      })
     }
   }
 }
@@ -289,6 +439,12 @@ export default {
 .filter-data-container {
   padding: 0 10px 0 10px;
   font-size: 14px;
+}
+.el-form-item.current-filter-condition {
+  margin-right: 0;
+  .el-form-item__label {
+    padding: 0;
+  }
 }
 .month-container {
   padding-left: 10px;
@@ -311,19 +467,10 @@ export default {
   &:hover {
     background-color: #f5f7fa;
   }
-  // p {
-  //   margin: 0;
-  //   line-height: 1.5;
-  //   padding: 4px 0px;
-  // }
 }
 .infinite-list-item {
   padding: 0 10px 0 10px;
   font-size: 14px;
-  // border-bottom: 1px solid #eee;
-  // &:first-child {
-  //   border-top: 1px solid #eee;
-  // }
 }
 .no-more-list {
   text-align: center;
@@ -348,12 +495,5 @@ export default {
 .grid-content {
   min-height: 36px;
   border-radius: 4px;
-}
-.el-table .warning-row {
-  background: #fde2e2;
-}
-
-.el-table .success-row {
-  background: #f0f9eb;
 }
 </style>

@@ -3,8 +3,6 @@ import {
   Button,
   Row,
   Col,
-  Table,
-  TableColumn,
   DatePicker,
   Form,
   FormItem,
@@ -14,17 +12,16 @@ import {
   Option,
   InfiniteScroll,
   Radio,
-  Menu,
-  Submenu,
-  MenuItem,
   Backtop
 } from 'element-ui'
+
+if (window.innerWidth <= 414) {
+  Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
+}
 
 Vue.use(Button)
   .use(Row)
   .use(Col)
-  .use(Table)
-  .use(TableColumn)
   .use(DatePicker)
   .use(Form)
   .use(FormItem)
@@ -34,7 +31,4 @@ Vue.use(Button)
   .use(Option)
   .use(InfiniteScroll)
   .use(Radio)
-  .use(Menu)
-  .use(Submenu)
-  .use(MenuItem)
   .use(Backtop)
