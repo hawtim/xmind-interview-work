@@ -22,5 +22,11 @@ module.exports = {
         jest: true
       }
     }
-  ]
+  ],
+  globals: {
+    mapState: true,
+    mapActions: true,
+    mapGetters: true,
+    mapMutations: true
+  }
 }
