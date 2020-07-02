@@ -1,4 +1,4 @@
 import Vue from 'vue'
-import VeLine from 'v-charts/lib/line.common'
+import VePie from 'v-charts/lib/pie.common'
 
-Vue.component(VeLine.name, VeLine)
+Vue.component(VePie.name, VePie)
