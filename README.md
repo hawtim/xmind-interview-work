@@ -6,6 +6,8 @@ Refer : [XMind 前端面试大作业 - 1](https://github.com/xmindltd/hiring/blo
 
 Notes : [解决本题目时的思考文档](https://github.com/hawtim/x-pocket-book/blob/master/POINT.md)
 
+Deploy: [线上链接](https://pocket.hawtim.com/), 建议桌面模式查看，移动端做了适当的调整，也可操作。
+
 ## Basic requirement
 
 1. 加载我们所提供的数据；
@@ -56,7 +58,7 @@ npm run test:e2e
 npm run lint
 ```
 
-### Webpack Bundle Analysis
+### Webpack bundle analysis
 ```
 npm run analyzer
 ```
