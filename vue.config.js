@@ -1,6 +1,5 @@
 const webpack = require('webpack')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-  .BundleAnalyzerPlugin
+const report = process.env.npm_config_report;
 
 module.exports = {
   chainWebpack: config => {
@@ -13,6 +12,11 @@ module.exports = {
         mapState: ['vuex', 'mapState']
       }
     ])
+    if (report) {
+      config
+        .plugin('webpack-bundle-analyzer')
+        .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    }
   },
   configureWebpack: {
     module: {
@@ -27,9 +31,6 @@ module.exports = {
           }
         }
       ]
-    },
-    plugins: [
-      // new BundleAnalyzerPlugin()
-    ]
+    }
   }
 }
