@@ -438,25 +438,6 @@ export default {
 <style scoped lang="scss">
 .home {
   min-height: 100vh;
-  // background-color: #ccc;
-}
-// 大于 768
-@media screen and (min-width: 768px) {
-  .home {
-    padding: 0 15%;
-  }
-}
-// 小于 768 大于 414
-@media screen and (max-width: 768px) and (min-width: 415px) {
-  .home {
-    padding: 0 10%;
-  }
-}
-// 小于 414
-@media screen and (max-width: 414px) {
-  .home {
-    padding: 0 0;
-  }
 }
 
 .main-content {
@@ -522,6 +503,28 @@ export default {
   }
   .el-form {
     padding-top: 15px;
+  }
+}
+
+// 大于 768
+@media screen and (min-width: 768px) {
+  .home {
+    padding: 0 15%;
+  }
+}
+// 小于 768 大于 414
+@media screen and (max-width: 768px) and (min-width: 415px) {
+  .home {
+    padding: 0 10%;
+  }
+}
+// 小于 414
+@media screen and (max-width: 414px) {
+  .home {
+    padding: 0 0;
+  }
+  .main-content {
+    padding-top: 10px;
   }
 }
 </style>
