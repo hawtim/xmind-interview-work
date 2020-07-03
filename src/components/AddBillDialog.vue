@@ -1,8 +1,7 @@
 <template>
   <el-dialog
-    class=""
+    class="add-bill-dialog"
     title="添加账单"
-    width="30%"
     :visible="show"
     :show-close="true"
     @close="handleClose"
@@ -105,3 +104,15 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.add-bill-dialog {
+  .el-date-editor.el-input,
+  .el-date-editor.el-input__inner {
+    width: auto !important;
+    min-width: 100%;
+  }
+  .el-select {
+    display: block;
+  }
+}
+</style>
