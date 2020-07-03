@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import {
   Button,
-  Row,
-  Col,
   DatePicker,
   Form,
   FormItem,
@@ -11,8 +9,8 @@ import {
   Select,
   Option,
   InfiniteScroll,
-  Radio,
-  Backtop
+  Backtop,
+  Tag
 } from 'element-ui'
 
 if (window.innerWidth <= 414) {
@@ -20,8 +18,6 @@ if (window.innerWidth <= 414) {
 }
 
 Vue.use(Button)
-  .use(Row)
-  .use(Col)
   .use(DatePicker)
   .use(Form)
   .use(FormItem)
@@ -30,5 +26,5 @@ Vue.use(Button)
   .use(Select)
   .use(Option)
   .use(InfiniteScroll)
-  .use(Radio)
   .use(Backtop)
+  .use(Tag)
