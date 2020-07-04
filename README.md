@@ -2,11 +2,17 @@
 
 简易记账本
 
-Refer : [XMind 前端面试大作业 - 1](https://github.com/xmindltd/hiring/blob/master/frontend-1/README.md)
+`Refer`: [XMind 前端面试大作业 - 1](https://github.com/xmindltd/hiring/blob/master/frontend-1/README.md)
 
-Notes : [解决本题目时的思考文档](https://github.com/hawtim/x-pocket-book/blob/master/POINT.md)
+`Notes`: [解决本题目时的思考文档](https://github.com/hawtim/x-pocket-book/blob/master/POINT.md)
 
-Deploy: [线上链接](https://pocket.hawtim.com/), 建议桌面模式查看，移动端做了适当的调整，也可操作。
+`Deploy`: [线上链接](https://pocket.hawtim.com/), 建议桌面模式查看，移动端做了适当的调整，也可操作。
+
+`Environment`: 开发环境为 mac / windows , node 版本为 v12.13.1，理论上 node@8.x 即可支持，按照 `package-lock.json` 安装依赖即可。
+
+`Compatible`: 页面兼容性 IE9+ 及其他现代浏览器，取决于 VueJS 的兼容性。
+
+以上任何问题，欢迎 issues。
 
 ## Basic requirement
 
