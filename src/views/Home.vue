@@ -77,15 +77,17 @@
       </el-form>
       <!-- 统计区域 -->
       <div
-        class="statistic-container flex"
+        class="statistic-container flex justify_center"
         :style="isMobile ? 'flex-direction: column;' : ''"
         v-if="this.currentBillList && filterForm.month && !filterForm.category"
       >
         <ve-pie
+          v-if="output"
           :style="{ width: isMobile ? '100%' : '50%' }"
           :data="outputChartData"
         ></ve-pie>
         <ve-pie
+          v-if="income"
           :style="{ width: isMobile ? '100%' : '50%' }"
           :data="incomeChartData"
         ></ve-pie>
@@ -426,10 +428,15 @@ export default {
       this.dialogFormVisible = false
     },
     handleDialogUpdate(data) {
+      console.log(data)
       this.filterForm.month = ''
       this.filterForm.category = ''
       // 新增数据更新
       this.$store.commit('addBill', data)
+      this.$message({
+        message: '添加成功',
+        type: 'success'
+      });
       this.processBillList()
     }
   }

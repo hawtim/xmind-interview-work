@@ -10,12 +10,15 @@ import {
   Option,
   InfiniteScroll,
   Backtop,
-  Tag
+  Tag,
+  Message
 } from 'element-ui'
 
 if (window.innerWidth <= 414) {
   Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
 }
+
+Vue.prototype.$message = Message
 
 Vue.use(Button)
   .use(DatePicker)
