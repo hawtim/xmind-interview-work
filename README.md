@@ -12,7 +12,18 @@
 
 `Compatible`: 页面兼容性 IE9+ 及其他现代浏览器，取决于 VueJS 的兼容性。
 
+`Extra`: 本次作业实现的内容除了满足基本定性需求之外，还包括以下内容：
+
+1. 性能优化：基于 webpack 的项目依赖分析，按需加载组件和图表展示
+2. 单元测试：基于 jest 的组件单元测试
+3. 项目部署：基于 nginx 的项目部署，配置 https：https://pocket.hawtim.com/
+4. 代码质量：项目工程文件的引入，对代码规范的处理 .prettierrc .editorconfig
+5. 开发效率：针对 npm 的代理及其他设置的 .npmrc 和代码跳转的 jsconfig.json
+6. 文档总结：remote-ssh 的使用 https://github.com/hawtim/blog/issues/32
+7. 产品思维：使用图表的形式来呈现统计内容更加直观，符合用户体验设计
+
 以上任何问题，欢迎 issues。
+
 
 ## Basic requirement
 
@@ -29,6 +40,7 @@
 ## For remote
 
 写一篇[简单的文档](https://github.com/hawtim/x-pocket-book/blob/master/POINT.md)来描述你对解决本题目时的思考过程，并对其中所遇到的问题和你的解决方案进行描述。
+
 
 ## Build with
 
